@@ -1,0 +1,48 @@
+/* Permanent Dark Theme Token System for hawkEYE Authority Dashboard */
+:root [data-authority-theme="dark"],
+.authority-dark-root {
+  --auth-bg-canvas: #090a0f;
+  --auth-bg-surface: rgba(18, 22, 31, 0.75);
+  --auth-bg-surface-elevated: rgba(26, 32, 46, 0.85);
+  --auth-bg-subtle: rgba(255, 255, 255, 0.04);
+  
+  --auth-border-subtle: rgba(255, 255, 255, 0.08);
+  --auth-border-accent: rgba(217, 119, 6, 0.3);
+
+  --auth-text-primary: #f8fafc;
+  --auth-text-secondary: #94a3b8;
+  --auth-text-muted: #64748b;
+
+  --auth-accent-amber: #f59e0b;
+  --auth-accent-amber-glow: rgba(245, 158, 11, 0.15);
+  --auth-accent-cyan: #06b6d4;
+  --auth-accent-emerald: #10b981;
+  --auth-accent-rose: #f43f5e;
+}
+
+.auth-glass-surface {
+  background: rgba(15, 19, 28, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.auth-glass-elevated {
+  background: rgba(24, 30, 44, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
+}
+
+.auth-glass-subtle {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.auth-amber-glow-bg {
+  background: radial-gradient(circle at 50% 0%, rgba(217, 119, 6, 0.12) 0%, transparent 70%);
+}

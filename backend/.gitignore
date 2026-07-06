@@ -1,0 +1,20 @@
+# Python & Virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Environment secrets & Service Account Keys
+.env
+secrets/
+*.service-account.json
+firebase-service-account.json
+service-account.json
+!secrets/.gitkeep
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
