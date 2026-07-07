@@ -3,14 +3,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { AuthorityIssueInspectionItem } from '../types/authority';
 import { normalizeCategory } from '../../utils/categoryNormalizer';
 import { authService } from '../../services/authService';
-
 import { normalizeReportStatus } from '../../utils/statusNormalizer';
+import { apiFetch } from '../../utils/apiClient';
 
-import { API_BASE_URL } from '../../config/api';
 
 interface AuthorityReportsContextType {
   reports: AuthorityIssueInspectionItem[];
   loading: boolean;
+  error: string | null;
   fetchReports: () => Promise<void>;
   updateReport: (updatedDoc: any) => void;
   refreshSingleReport: (reportId: string) => Promise<void>;
@@ -50,6 +50,7 @@ const mapDocToInspectionItem = (doc: any, idx: number): AuthorityIssueInspection
 export const AuthorityReportsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [reports, setReports] = useState<AuthorityIssueInspectionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize Firebase Auth anonymous session
   useEffect(() => {
@@ -58,8 +59,20 @@ export const AuthorityReportsProvider: React.FC<{ children: React.ReactNode }> =
   }, []);
 
   const fetchReports = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const startTime = performance.now();
     try {
-      const response = await fetch(`${API_BASE_URL}/api/issues`);
+      if (import.meta.env.DEV) {
+        console.debug('[AuthorityReportsContext] fetchReports started...');
+      }
+      const response = await apiFetch('/api/issues');
+      
+      const elapsed = performance.now() - startTime;
+      if (import.meta.env.DEV) {
+        console.debug(`[AuthorityReportsContext] fetchReports finished in ${elapsed.toFixed(2)}ms`);
+      }
+
       if (response.ok) {
         const data = await response.json();
         const mapped = (data.issues || [])
@@ -68,9 +81,13 @@ export const AuthorityReportsProvider: React.FC<{ children: React.ReactNode }> =
             mapDocToInspectionItem(doc, idx)
           );
         setReports(mapped);
+      } else {
+        throw new Error(`Failed to fetch reports: ${response.status} ${response.statusText}`);
       }
-    } catch (err) {
-      console.error('Error fetching reports:', err);
+    } catch (err: any) {
+      const elapsed = performance.now() - startTime;
+      console.error(`[AuthorityReportsContext] Error inside fetchReports (failed after ${elapsed.toFixed(2)}ms):`, err);
+      setError(err.message || 'An unexpected error occurred while fetching reports.');
     } finally {
       setLoading(false);
     }
@@ -101,7 +118,7 @@ export const AuthorityReportsProvider: React.FC<{ children: React.ReactNode }> =
 
   const refreshSingleReport = useCallback(async (reportId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/issues/${reportId}`);
+      const response = await apiFetch(`/api/issues/${reportId}`);
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.issue) {
@@ -113,8 +130,17 @@ export const AuthorityReportsProvider: React.FC<{ children: React.ReactNode }> =
     }
   }, [updateReport]);
 
+  const value = {
+    reports,
+    loading,
+    error,
+    fetchReports,
+    updateReport,
+    refreshSingleReport
+  };
+
   return (
-    <AuthorityReportsContext.Provider value={{ reports, loading, fetchReports, updateReport, refreshSingleReport }}>
+    <AuthorityReportsContext.Provider value={value}>
       {children}
     </AuthorityReportsContext.Provider>
   );

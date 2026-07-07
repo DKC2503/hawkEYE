@@ -337,3 +337,28 @@ body,
     animation: none !important;
   }
 }
+
+/* Citizen Mobile Header Brand overrides (below 768px) */
+@media (max-width: 767px) {
+  .citizen-mobile-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: clamp(8px, 2.5vw, 12px) !important;
+    width: fit-content !important;
+    max-width: min(60vw, 300px) !important;
+    padding: 6px 12px !important;
+  }
+  .citizen-mobile-brand-eye {
+    width: clamp(38px, 8vw, 52px) !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
+    object-fit: contain !important;
+  }
+  .citizen-mobile-brand-wordmark {
+    width: clamp(145px, 34vw, 205px) !important;
+    height: auto !important;
+    flex: 0 1 auto !important;
+    object-fit: contain !important;
+  }
+}

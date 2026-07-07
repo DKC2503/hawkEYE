@@ -47,6 +47,7 @@ export const ReportPage: React.FC = () => {
   };
 
   const handleRunVisionAnalysis = async () => {
+    if (formData.aiState === 'analyzing') return;
     if (!formData.imageFile) {
       setErrorMessage('No image selected to analyze.');
       setErrorCode('INVALID_IMAGE');
@@ -106,6 +107,7 @@ export const ReportPage: React.FC = () => {
 
   // Step 4 -> Step 5 transition with Duplicate Check
   const handleProceedToConfirmation = async () => {
+    if (checkingDuplicate) return;
     if (activeLocation && !userConfirmedDifferent) {
       setCheckingDuplicate(true);
       try {
@@ -130,6 +132,7 @@ export const ReportPage: React.FC = () => {
   };
 
   const handleFinalSubmission = async () => {
+    if (formData.submissionState === 'submitting') return;
     const activeLoc = geo.location || formData.location;
 
     if (!formData.imageFile) {

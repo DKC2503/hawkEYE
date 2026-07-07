@@ -3,7 +3,7 @@ import { AuthorityShell } from '../components/layout/AuthorityShell';
 import { LiquidGlassModal } from '../../components/ui/LiquidGlassModal';
 import { ToastNotification } from '../../components/ui/ToastNotification';
 import { GlassDropdown, type GlassDropdownOption } from '../../components/ui/GlassDropdown';
-import { API_BASE_URL } from '../../config/api';
+import { apiFetch } from '../../utils/apiClient';
 
 const decisionOptions: GlassDropdownOption[] = [
   { value: 'APPROVE_PLANNING', label: 'Approve for Municipal Planning' },
@@ -31,7 +31,7 @@ export const PriorityProposalsPage: React.FC = () => {
   const fetchProposals = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/intelligence/proposals`);
+      const res = await apiFetch('/api/intelligence/proposals');
       if (res.ok) {
         const data = await res.json();
         setProposals(data);
@@ -51,7 +51,7 @@ export const PriorityProposalsPage: React.FC = () => {
   const handleCompare = async (propB: any) => {
     if (!selectedProposal) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/intelligence/compare`, {
+      const res = await apiFetch('/api/intelligence/compare', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -75,7 +75,7 @@ export const PriorityProposalsPage: React.FC = () => {
     if (!selectedProposal) return;
     setActionLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/intelligence/proposals/${selectedProposal.proposal_id}/decide`, {
+      const res = await apiFetch(`/api/intelligence/proposals/${selectedProposal.proposal_id}/decide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

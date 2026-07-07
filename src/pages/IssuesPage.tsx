@@ -6,7 +6,7 @@ import { GlassSurface } from '../components/ui/GlassSurface';
 import { authService } from '../services/authService';
 import type { StructuredLocation } from '../types/civic';
 
-import { API_BASE_URL } from '../config/api';
+import { apiFetch } from '../utils/apiClient';
 
 interface RealCitizenIssue {
   issueId: string;
@@ -34,7 +34,7 @@ export const IssuesPage: React.FC = () => {
           return;
         }
 
-        const response = await fetch(`${API_BASE_URL}/api/issues/my-issues`, {
+        const response = await apiFetch('/api/issues/my-issues', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

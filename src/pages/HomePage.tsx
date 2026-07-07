@@ -6,6 +6,7 @@ import { getCityConfig } from '../config/cityBackgrounds';
 import visakhapatnamSkyToCity from '../assets/hero/visakhapatnam-sky-to-city.jpg';
 
 import eyeLogo from '../assets/logo_cropped.png';
+import titleImg from '../assets/Title_clean.png';
 
 const customStyles = `
   @keyframes glassPlateEntrance {
@@ -36,6 +37,26 @@ const customStyles = `
   .animate-wordmark-entrance {
     opacity: 0;
     animation: wordmarkEntrance 900ms cubic-bezier(0.22, 1, 0.36, 1) 350ms forwards;
+  }
+
+  :root {
+    --brand-lockup-width: clamp(520px, 48vw, 850px);
+    --brand-gap: clamp(16px, 2.5vw, 32px);
+    --scroll-bottom: 2rem;
+    --loc-top: 2rem;
+    --loc-left: 2rem;
+    --loc-font: inherit;
+  }
+  
+  @media (max-width: 767px) {
+    :root {
+      --brand-lockup-width: clamp(300px, 88vw, 520px);
+      --brand-gap: clamp(12px, 2vw, 20px);
+      --scroll-bottom: max(28px, env(safe-area-inset-bottom));
+      --loc-top: 28px;
+      --loc-left: 24px;
+      --loc-font: clamp(14px, 4vw, 18px);
+    }
   }
 `;
 
@@ -104,41 +125,36 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* SCREEN 1: CITY HERO (UPPER HALF) */}
-      <section className="relative w-full h-[100dvh] z-10 bg-transparent" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}>
+      <section className="relative w-full h-[100dvh] min-h-[100dvh] z-10 bg-transparent overflow-hidden" style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always', boxSizing: 'border-box' }}>
         
-        {/* CENTER BRAND IDENTITY */}
-        <div className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-center w-full px-4">
-          <div className="flex items-center justify-center gap-6 md:gap-10 animate-plate-entrance w-full max-w-[calc(100vw-32px)] md:max-w-none">
+        {/* CENTER BRAND IDENTITY (Unified Mobile & Desktop) */}
+        <div className="absolute top-[48%] md:top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center justify-center w-[calc(100%-40px)] md:w-full max-w-[420px] md:max-w-none px-4 md:px-0">
+          <div 
+            className="flex items-center justify-center w-full animate-plate-entrance mx-auto"
+            style={{ width: 'var(--brand-lockup-width)', gap: 'var(--brand-gap)' }}
+          >
             {/* EYE SYMBOL */}
             <img 
               src={eyeLogo} 
               alt="hawkEYE icon"
-              className="animate-eye-entrance object-contain"
+              className="animate-eye-entrance object-contain shrink-0 w-1/4 md:w-[22%]"
               style={{
-                width: 'clamp(170px, 20vw, 210px)',
                 height: 'auto',
                 filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 24px rgba(0, 0, 0, 0.4))',
                 opacity: 1 // Managed by animation
               }}
             />
-            {/* WORDMARK TEXT */}
-            <div 
-              className="animate-wordmark-entrance font-sans select-none"
+            {/* WORDMARK IMAGE */}
+            <img 
+              src={titleImg}
+              alt="hawkEYE Title"
+              className="animate-wordmark-entrance object-contain flex-1 shrink-0 min-w-0"
               style={{ 
-                fontSize: 'clamp(4rem, 7.5vw, 6rem)',
-                lineHeight: 1,
-                opacity: 1
+                height: 'auto',
+                filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.75))',
+                opacity: 1 // Managed by animation
               }}
-            >
-              <span style={{ 
-                color: 'white', 
-                textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)'
-              }}>hawk</span>
-              <span style={{ 
-                color: '#101820', 
-                textShadow: '0 0 2px rgba(255,255,255,0.7), 0 1px 4px rgba(255,255,255,0.4)'
-              }}>EYE</span>
-            </div>
+            />
           </div>
 
           {/* TAGLINE */}
@@ -146,7 +162,7 @@ export const HomePage: React.FC = () => {
             className="animate-wordmark-entrance mt-6 text-white font-medium text-center uppercase"
             style={{ 
               letterSpacing: '0.15em', 
-              fontSize: 'clamp(0.9rem, 1.8vw, 1.15rem)',
+              fontSize: 'clamp(0.85rem, 1.8vw, 1.15rem)',
               textShadow: '0 2px 8px rgba(0,0,0,0.9), 0 4px 16px rgba(0,0,0,0.6)',
               opacity: 1
             }}
@@ -156,23 +172,33 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Top-Left Location */}
-        <div className="absolute top-8 left-8 md:top-12 md:left-12 flex items-center gap-3">
+        <div 
+          className="absolute top-8 left-8 md:top-12 md:left-12 flex items-center gap-3"
+          style={{ top: 'var(--loc-top)', left: 'var(--loc-left)' }}
+        >
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-          <h2 className="text-white font-bold tracking-widest uppercase text-sm md:text-base drop-shadow-md">
+          <h2 
+            className="text-white font-bold tracking-widest uppercase drop-shadow-md"
+            style={{ fontSize: 'var(--loc-font)' }}
+          >
             {currentCityConfig.displayName} LIVE
           </h2>
         </div>
 
         {/* Top-Right Weather */}
-        <div className="absolute top-8 right-8 md:top-12 md:right-12 flex items-center gap-2 text-white/90 font-medium bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+        <div className="absolute top-[28px] right-6 md:top-12 md:right-12 flex items-center gap-1.5 md:gap-2 text-white/90 font-medium bg-black/20 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 text-xs md:text-sm">
           <svg className="w-4 h-4 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
-          <span className="drop-shadow-md text-sm">28°C / Clear</span>
+          <span className="drop-shadow-md">28°C / Clear</span>
         </div>
 
         {/* Bottom-Center Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-90 animate-bounce cursor-pointer" onClick={() => containerRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+        <div 
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-90 animate-bounce cursor-pointer" 
+          onClick={() => containerRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+          style={{ bottom: 'var(--scroll-bottom)', left: '50%', transform: 'translateX(-50%)', zIndex: 30, whiteSpace: 'nowrap' }}
+        >
           <span className="text-white/90 text-xs font-bold tracking-[0.2em] uppercase drop-shadow-md">Scroll to Explore</span>
           <svg className="w-6 h-6 text-white/90 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />

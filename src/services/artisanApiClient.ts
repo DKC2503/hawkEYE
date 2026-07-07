@@ -1,6 +1,7 @@
 import { authService } from './authService';
-
+import { apiFetch } from '../utils/apiClient';
 import { API_BASE_URL } from '../config/api';
+
 
 export interface ArtisanProfile {
   employeeId: string;
@@ -89,14 +90,7 @@ class ArtisanApiClient {
   }
 
   private async safeFetch(url: string, init?: RequestInit): Promise<Response> {
-    try {
-      return await fetch(url, init);
-    } catch (err: any) {
-      if (err.name === 'TypeError' || err.message?.includes('fetch') || err.message?.includes('NetworkError')) {
-        throw new Error(`[CONNECTION_REFUSED] Operational backend server is unavailable at ${API_BASE_URL}. Please ensure FastAPI server is running.`);
-      }
-      throw err;
-    }
+    return await apiFetch(url, init);
   }
 
   async getProfile(): Promise<ArtisanProfile> {
@@ -187,7 +181,7 @@ class ArtisanApiClient {
 
   // Authority Verification API Client Methods
   async getVerificationQueue(): Promise<ArtisanWorkOrder[]> {
-    const res = await fetch(`${API_BASE_URL}/api/authority/verification-queue`, {
+    const res = await apiFetch('/api/authority/verification-queue', {
       headers: { 'X-Authority-Role': 'authority' },
     });
     const data = await res.json();
@@ -198,7 +192,7 @@ class ArtisanApiClient {
   }
 
   async approveVerification(workOrderId: string): Promise<ArtisanWorkOrder> {
-    const res = await fetch(`${API_BASE_URL}/api/authority/work-orders/${workOrderId}/verify-approval`, {
+    const res = await apiFetch(`/api/authority/work-orders/${workOrderId}/verify-approval`, {
       method: 'POST',
       headers: { 'X-Authority-Role': 'authority' },
     });
@@ -210,7 +204,7 @@ class ArtisanApiClient {
   }
 
   async rejectVerification(workOrderId: string, reasonCode: string, remarks: string): Promise<ArtisanWorkOrder> {
-    const res = await fetch(`${API_BASE_URL}/api/authority/work-orders/${workOrderId}/verify-rejection`, {
+    const res = await apiFetch(`/api/authority/work-orders/${workOrderId}/verify-rejection`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

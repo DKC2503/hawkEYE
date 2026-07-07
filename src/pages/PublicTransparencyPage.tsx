@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuthorityReports } from '../authority/context/AuthorityReportsContext';
 import { normalizeReportStatus } from '../utils/statusNormalizer';
-import { API_BASE_URL } from '../config/api';
+import { apiFetch } from '../utils/apiClient';
 
 export const PublicTransparencyPage: React.FC = () => {
   const { reports } = useAuthorityReports();
@@ -15,7 +15,7 @@ export const PublicTransparencyPage: React.FC = () => {
     const fetchPublicData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/api/intelligence/public/transparency`);
+        const res = await apiFetch('/api/intelligence/public/transparency');
         if (res.ok) setTransparencyData(await res.json());
       } catch {
         // Ignore

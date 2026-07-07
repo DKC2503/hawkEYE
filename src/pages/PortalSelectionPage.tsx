@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../assets/logo_cropped.png';
 import titleImg from '../assets/Title_clean.png';
+import { TeamSection } from '../components/team/TeamSection';
 
 const FadeIn: React.FC<{ children: React.ReactNode, delay: number, duration?: number, className?: string }> = ({ children, delay, duration = 1000, className = "" }) => {
   const [visible, setVisible] = useState(false);
@@ -121,7 +122,7 @@ export const PortalSelectionPage: React.FC = () => {
 
   return (
     <div 
-      className="relative w-full h-[100dvh] overflow-hidden bg-black text-white flex flex-col"
+      className="relative w-full h-auto min-h-[100dvh] overflow-x-clip overflow-y-auto bg-black text-white flex flex-col"
       style={{
         fontFamily: "'Inter', sans-serif",
         WebkitFontSmoothing: 'antialiased',
@@ -132,15 +133,13 @@ export const PortalSelectionPage: React.FC = () => {
       {/* Z-INDEX 0: Background Video */}
       <video
         ref={videoRef}
-        className={`video-cinematic-motion absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] ease-out ${clickedPortal ? 'scale-110' : ''}`}
+        className={`video-cinematic-motion fixed md:absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] ease-out ${clickedPortal ? 'scale-110' : ''}`}
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260403_050628_c4e32401-fab4-4a27-b7a8-6e9291cd5959.mp4"
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        onLoadedData={() => console.log('Video loaded data')}
-        onCanPlay={() => console.log('Video can play')}
         onError={(e) => console.error('Video error:', e)}
         style={{ 
           zIndex: 0,
@@ -150,7 +149,7 @@ export const PortalSelectionPage: React.FC = () => {
       
       {/* Z-INDEX 1: NIGHT COLOR GRADE */}
       <div 
-        className="absolute inset-0 pointer-events-none" 
+        className="fixed md:absolute inset-0 pointer-events-none" 
         style={{
           zIndex: 1,
           background: 'linear-gradient(135deg, rgba(2, 8, 20, 0.42) 0%, rgba(3, 28, 54, 0.24) 45%, rgba(0, 82, 130, 0.10) 100%)',
@@ -161,7 +160,7 @@ export const PortalSelectionPage: React.FC = () => {
 
       {/* Z-INDEX 2: BLUE-HOUR ATMOSPHERE */}
       <div 
-        className="absolute inset-0 pointer-events-none" 
+        className="fixed md:absolute inset-0 pointer-events-none" 
         style={{
           zIndex: 2,
           background: 'radial-gradient(ellipse at 72% 38%, rgba(60, 160, 220, 0.12), transparent 42%)',
@@ -172,7 +171,7 @@ export const PortalSelectionPage: React.FC = () => {
 
       {/* Z-INDEX 3: VIGNETTE */}
       <div 
-        className="absolute inset-0 pointer-events-none" 
+        className="fixed md:absolute inset-0 pointer-events-none" 
         style={{
           zIndex: 3,
           background: 'radial-gradient(ellipse at center, transparent 42%, rgba(0, 5, 14, 0.22) 75%, rgba(0, 4, 12, 0.46) 100%)'
@@ -181,7 +180,7 @@ export const PortalSelectionPage: React.FC = () => {
 
       {/* Z-INDEX 4: OPTIONAL SLOW LIGHT SWEEP */}
       <div 
-        className="absolute inset-0 pointer-events-none sweep-animation" 
+        className="fixed md:absolute inset-0 pointer-events-none sweep-animation" 
         style={{
           zIndex: 4,
           background: 'linear-gradient(90deg, transparent 0%, rgba(80,180,255,0.035) 50%, transparent 100%)',
@@ -190,10 +189,10 @@ export const PortalSelectionPage: React.FC = () => {
       />
 
       {/* Z-INDEX 10: ALL PAGE CONTENT */}
-      <div className="relative z-10 flex flex-col h-full w-full max-w-screen-2xl mx-auto p-6 md:p-12 lg:p-16">
+      <div className="relative z-10 flex flex-col h-auto min-h-[100dvh] w-full max-w-screen-2xl mx-auto p-4 md:p-12 lg:p-16 pb-[calc(40px+env(safe-area-inset-bottom))] md:pb-12 overflow-visible">
         
         {/* Cinematic Dark Glass Brand Island (Compact & Top-Left) */}
-        <header className="animate-brand-entrance absolute top-4 left-4 right-4 md:top-[24px] md:left-[24px] md:right-auto md:w-fit lg:top-[32px] lg:left-[48px] xl:left-[64px] z-20 cinematic-brand-island h-[75px] md:h-[90px] lg:h-[110px] py-[8px] px-[16px] md:px-[20px] rounded-[20px] lg:rounded-[24px] flex items-center justify-center overflow-visible">
+        <header className="animate-brand-entrance relative md:absolute top-auto left-auto right-auto md:top-[24px] md:left-[24px] md:right-auto w-[calc(100%-32px)] max-w-[420px] md:w-fit mx-auto md:mx-0 z-20 cinematic-brand-island py-[14px] px-[16px] md:py-[8px] md:px-[20px] rounded-[20px] lg:rounded-[24px] flex items-center justify-center overflow-visible gap-[10px] md:gap-0">
           
           {/* Soft feathered glow ::after replacement */}
           <div 
@@ -214,11 +213,11 @@ export const PortalSelectionPage: React.FC = () => {
           />
 
           {/* Centered Logo Content */}
-          <div className="flex flex-row items-center justify-center gap-[16px] md:gap-[28px] lg:gap-[36px] w-full h-full relative z-10">
+          <div className="flex flex-row items-center justify-center gap-[10px] md:gap-[28px] lg:gap-[36px] w-full h-full relative z-10">
             <img 
               src={logoImg} 
               alt="hawkEYE Icon" 
-              className="w-[60px] md:w-[95px] lg:w-[115px] max-w-none h-auto object-contain shrink-0"
+              className="shrink-0 w-[clamp(52px,17vw,76px)] md:w-[95px] lg:w-[115px] h-auto object-contain"
               style={{
                 opacity: 1,
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.80)) drop-shadow(0 0 18px rgba(60,170,255,0.12))'
@@ -227,7 +226,7 @@ export const PortalSelectionPage: React.FC = () => {
             <img 
               src={titleImg} 
               alt="hawkEYE Title" 
-              className="w-[200px] md:w-[330px] lg:w-[380px] max-w-none h-auto object-contain shrink-0" 
+              className="flex-1 min-w-0 w-auto max-w-[250px] md:max-w-none md:w-[330px] lg:w-[380px] h-auto object-contain shrink-0 md:shrink" 
               style={{
                 opacity: 1,
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.80)) drop-shadow(0 0 18px rgba(60,170,255,0.12))'
@@ -237,14 +236,14 @@ export const PortalSelectionPage: React.FC = () => {
         </header>
 
         {/* Asymmetrical Layout Content */}
-        <main className="flex-1 flex flex-col lg:flex-row items-end lg:items-center justify-between w-full h-full gap-12 lg:gap-8 pt-24 pb-12 lg:pb-0 relative z-20 overflow-y-auto lg:overflow-hidden">
+        <main className="flex-initial md:flex-1 flex flex-col lg:flex-row items-stretch lg:items-center justify-between w-full h-auto md:h-full gap-12 lg:gap-8 pt-6 md:pt-24 pb-12 lg:pb-0 relative z-20 overflow-visible md:overflow-y-auto lg:overflow-hidden">
           
           {/* LEFT: Main Heading Area */}
-          <div className="w-full lg:w-[55%] flex flex-col justify-end lg:justify-center mb-8 lg:mb-0 relative min-h-[160px] lg:min-h-0">
-            <div className={`transition-all duration-700 ${clickedPortal ? 'opacity-0 scale-95 pointer-events-none absolute' : 'opacity-100 scale-100 relative'}`}>
+          <div className="w-full lg:w-[55%] flex flex-col justify-center mb-8 lg:mb-0 relative min-h-0 md:min-h-[160px] lg:min-h-0">
+            <div className={`transition-all duration-700 ${clickedPortal ? 'opacity-0 scale-95 pointer-events-none absolute' : 'opacity-100 scale-100 relative'} flex flex-col`}>
               <AnimatedHeading isFadingOut={clickedPortal !== null} />
-              <FadeIn delay={900} duration={1000} className="mt-8">
-                <p className="text-base md:text-lg lg:text-xl text-white/70 font-light tracking-wide">
+              <FadeIn delay={900} duration={1000} className="mt-[28px] md:mt-8 w-[calc(100%-40px)] md:w-auto max-w-[520px] md:max-w-none mx-auto md:mx-0">
+                <p className="text-[clamp(17px,5vw,22px)] md:text-base lg:text-xl text-white/70 font-light tracking-wide leading-relaxed text-center md:text-left">
                   One city. Three forces. One path from report to resolution.
                 </p>
               </FadeIn>
@@ -257,8 +256,8 @@ export const PortalSelectionPage: React.FC = () => {
           </div>
 
           {/* RIGHT: Portals */}
-          <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-end justify-end lg:justify-center gap-4">
-            <div className="flex flex-col w-full max-w-sm lg:max-w-md gap-4">
+          <div className="w-full lg:w-[40%] flex flex-col items-center lg:items-end justify-center gap-4 mt-[48px] md:mt-0">
+            <div className="flex flex-col w-[calc(100%-32px)] md:w-full max-w-sm lg:max-w-md gap-[18px] md:gap-4 mx-auto md:mx-0">
               {portals.map((portal) => {
                 const isHovered = hoveredPortal === portal.id;
                 const isOtherHovered = hoveredPortal !== null && hoveredPortal !== portal.id;
@@ -271,7 +270,7 @@ export const PortalSelectionPage: React.FC = () => {
                       onMouseEnter={() => setHoveredPortal(portal.id)}
                       onMouseLeave={() => setHoveredPortal(null)}
                       onClick={() => handlePortalClick(portal.id, portal.path)}
-                      className={`liquid-glass group cursor-pointer relative flex items-center justify-between px-8 py-5 md:py-6 rounded-2xl transition-all duration-500 w-full overflow-hidden
+                      className={`liquid-glass group cursor-pointer relative flex items-center justify-between px-[36px] py-[28px] md:px-8 md:py-6 min-h-[170px] md:min-h-0 rounded-2xl transition-all duration-500 w-full overflow-hidden
                         ${isClicked ? 'scale-[1.03] opacity-100 bg-white/10' : ''}
                         ${isOtherClicked ? 'opacity-0 scale-95 pointer-events-none' : ''}
                         ${!clickedPortal && isHovered ? 'scale-[1.02] bg-white/5' : ''}
@@ -307,11 +306,11 @@ export const PortalSelectionPage: React.FC = () => {
           </div>
         </main>
 
-        {/* BOTTOM RIGHT: Workflow Statement */}
-        <div className="absolute bottom-6 md:bottom-12 right-6 md:right-12 z-20">
+        {/* BOTTOM RIGHT: Tagline Pill */}
+        <div className="relative md:absolute bottom-auto md:bottom-12 right-auto md:right-12 z-20 w-[calc(100%-48px)] md:w-auto max-w-[420px] md:max-w-none mx-auto md:mx-0 mt-[32px] md:mt-0 flex justify-center text-center">
           <FadeIn delay={1450} duration={1000}>
-            <div className={`liquid-glass px-5 md:px-6 py-3 rounded-full transition-opacity duration-500 ${clickedPortal ? 'opacity-0' : 'opacity-100'}`}>
-              <span className="text-xs md:text-sm lg:text-base font-light tracking-[0.3em] text-white/70 uppercase">
+            <div className={`liquid-glass px-5 md:px-6 py-3 rounded-full transition-opacity duration-500 w-full md:w-auto text-center ${clickedPortal ? 'opacity-0' : 'opacity-100'}`}>
+              <span className="block text-center text-xs md:text-sm lg:text-base font-light tracking-[0.3em] text-white/70 uppercase">
                 SEEING. ACTING. FIXING.
               </span>
             </div>
@@ -319,11 +318,11 @@ export const PortalSelectionPage: React.FC = () => {
         </div>
 
         {/* BOTTOM LEFT: Demonstration Notice */}
-        <div className="absolute bottom-6 md:bottom-[24px] lg:bottom-[32px] left-0 right-0 md:right-auto md:left-[24px] lg:left-[48px] xl:left-[64px] z-20 pointer-events-none px-4 md:px-0">
+        <div className="relative md:absolute bottom-auto md:bottom-[24px] lg:bottom-[32px] left-auto right-auto md:left-[24px] lg:left-[48px] xl:left-[64px] z-20 pointer-events-none px-4 md:px-0 w-[calc(100%-40px)] md:w-auto mx-auto md:mx-0 mt-[24px] md:mt-0 pb-[max(32px,env(safe-area-inset-bottom))] md:pb-0">
           <FadeIn delay={1500} duration={1000}>
             <div className={`transition-opacity duration-500 ${clickedPortal ? 'opacity-0' : 'opacity-100'}`}>
               <div 
-                className="text-center md:text-left text-[9px] sm:text-[10px] md:text-[11px] font-medium uppercase tracking-[0.14em]"
+                className="text-center md:text-left text-[11px] sm:text-[11px] md:text-[11px] font-medium uppercase tracking-[0.08em] md:tracking-[0.14em] leading-relaxed"
                 style={{ color: 'rgba(255, 255, 255, 0.48)' }}
               >
                 — DEMONSTRATION PORTAL · FOR EVALUATION PURPOSES ONLY
@@ -333,6 +332,9 @@ export const PortalSelectionPage: React.FC = () => {
         </div>
       </div>
       
+      {/* OUR TEAM SECTION */}
+      <TeamSection />
+
       <style>{`
         @keyframes charFadeIn {
           from { opacity: 0; transform: translateX(-18px); }
@@ -387,6 +389,14 @@ export const PortalSelectionPage: React.FC = () => {
           -webkit-mask-composite: xor;
           mask-composite: exclude;
           pointer-events: none;
+        }
+        .portal-selection-heading {
+          font-size: clamp(42px, 13vw, 68px);
+        }
+        @media (min-width: 768px) {
+          .portal-selection-heading {
+            font-size: clamp(2.8rem, 4.8vw, 6.5rem);
+          }
         }
       `}</style>
     </div>

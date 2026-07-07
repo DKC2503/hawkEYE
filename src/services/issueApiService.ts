@@ -2,8 +2,9 @@ import { authService } from './authService';
 import { ApiError } from './api';
 import type { StructuredLocation, IssueCategory, IssueSeverity } from '../types/civic';
 import type { HawkEyeVisionResult } from '../types/reportFlow';
-
+import { apiFetch } from '../utils/apiClient';
 import { API_BASE_URL } from '../config/api';
+
 
 export interface DuplicateCandidate {
   issueId?: string;
@@ -62,7 +63,7 @@ export class IssueApiService {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/issues/check-duplicate`, {
+      const response = await apiFetch('/api/issues/check-duplicate', {
         method: 'POST',
         body: formData,
       });
@@ -83,7 +84,7 @@ export class IssueApiService {
       throw new ApiError('You must be authenticated before supporting an issue.', 'AUTH_REQUIRED');
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/issues/${issueIdOrTicket}/raise-hand`, {
+    const response = await apiFetch(`/api/issues/${issueIdOrTicket}/raise-hand`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -139,7 +140,7 @@ export class IssueApiService {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/issues`, {
+      const response = await apiFetch('/api/issues', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -204,7 +205,7 @@ export class IssueApiService {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/authority/issues/${reportId}/dismiss`, {
+      const response = await apiFetch(`/api/authority/issues/${reportId}/dismiss`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -248,7 +249,7 @@ export class IssueApiService {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/authority/issues/${reportId}/delete`, {
+      const response = await apiFetch(`/api/authority/issues/${reportId}/delete`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

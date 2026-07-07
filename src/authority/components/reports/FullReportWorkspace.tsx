@@ -33,7 +33,7 @@ const reassignmentReasonOptions: GlassDropdownOption[] = [
   { value: 'Other', label: 'Other' },
 ];
 
-import { API_BASE_URL } from '../../../config/api';
+import { apiFetch } from '../../../utils/apiClient';
 
 interface FullReportWorkspaceProps {
   report: AuthorityIssueInspectionItem | null;
@@ -84,7 +84,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/employees?active_only=true`);
+        const res = await apiFetch('/api/employees?active_only=true');
         if (res.ok) {
           const data = await res.json();
           const emps: MunicipalEmployee[] = data.employees || [];
@@ -109,7 +109,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
     const fetchExistingWorkOrder = async () => {
       try {
         const targetId = report.id || report.ticketId;
-        const res = await fetch(`${API_BASE_URL}/api/work-orders/by-report/${targetId}`);
+        const res = await apiFetch(`/api/work-orders/by-report/${targetId}`);
         if (res.ok) {
           const data = await res.json();
           if (data.workOrder) {
@@ -150,7 +150,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
   const handleAcceptReport = async () => {
     setActionLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/issues/${report.id}/accept`, {
+      const res = await apiFetch(`/api/issues/${report.id}/accept`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
 
     try {
       const targetId = report.id || report.ticketId;
-      const res = await fetch(`${API_BASE_URL}/api/issues/${targetId}/dismiss`, {
+      const res = await apiFetch(`/api/issues/${targetId}/dismiss`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -230,7 +230,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
       const targetReportId = report.id || report.ticketId;
 
       // 2. Dispatch Work Order (Idempotent request)
-      const res = await fetch(`${API_BASE_URL}/api/work-orders`, {
+      const res = await apiFetch('/api/work-orders', {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -269,7 +269,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
     if (!workOrderResult) return;
     setRetryingEmail(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/work-orders/${workOrderResult.workOrderId}/retry-email`, {
+      const res = await apiFetch(`/api/work-orders/${workOrderResult.workOrderId}/retry-email`, {
         method: 'POST',
         headers: {
           'X-Authority-Role': 'authority',
@@ -314,7 +314,7 @@ export const FullReportWorkspace: React.FC<FullReportWorkspaceProps> = ({ report
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await fetch(`${API_BASE_URL}/api/authority/work-orders/${workOrderResult.workOrderId}/reassign`, {
+      const res = await apiFetch(`/api/authority/work-orders/${workOrderResult.workOrderId}/reassign`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({

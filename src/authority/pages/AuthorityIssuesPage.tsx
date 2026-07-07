@@ -4,7 +4,7 @@ import { AuthorityIssueQueue } from '../components/issues/AuthorityIssueQueue';
 import { IssueInspectionPanel } from '../components/issues/IssueInspectionPanel';
 import type { AuthorityIssueInspectionItem } from '../types/authority';
 
-import { API_BASE_URL } from '../../config/api';
+import { apiFetch } from '../../utils/apiClient';
 
 export const AuthorityIssuesPage: React.FC = () => {
   const [issues, setIssues] = useState<AuthorityIssueInspectionItem[]>([]);
@@ -14,7 +14,7 @@ export const AuthorityIssuesPage: React.FC = () => {
   useEffect(() => {
     const fetchRealIssues = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/issues`);
+        const response = await apiFetch('/api/issues');
         if (response.ok) {
           const data = await response.json();
           const realDocs = (data.issues || []).map((doc: any, idx: number) => ({

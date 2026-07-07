@@ -3,7 +3,7 @@ import { AuthorityShell } from '../components/layout/AuthorityShell';
 import type { MunicipalEmployee } from '../types/authority';
 import { GlassDropdown, type GlassDropdownOption } from '../../components/ui/GlassDropdown';
 
-import { API_BASE_URL } from '../../config/api';
+import { apiFetch } from '../../utils/apiClient';
 
 const MUNICIPAL_DEPARTMENTS = [
   "Roads & Infrastructure",
@@ -50,7 +50,7 @@ export const WorkersPage: React.FC = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/employees?active_only=false`);
+      const res = await apiFetch('/api/employees?active_only=false');
       if (res.ok) {
         const data = await res.json();
         setEmployees(data.employees || []);
@@ -73,7 +73,7 @@ export const WorkersPage: React.FC = () => {
 
     try {
       const skillsArray = skillInput.split(',').map((s) => s.trim()).filter(Boolean);
-      const res = await fetch(`${API_BASE_URL}/api/employees`, {
+      const res = await apiFetch('/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ export const WorkersPage: React.FC = () => {
     try {
       const targetId = emp.employeeId || emp.employeeCode;
       const nextActive = !emp.isActive;
-      const res = await fetch(`${API_BASE_URL}/api/employees/${targetId}/status?isActive=${nextActive}`, {
+      const res = await apiFetch(`/api/employees/${targetId}/status?isActive=${nextActive}`, {
         method: 'PATCH',
         headers: {
           'X-Authority-Role': 'authority',

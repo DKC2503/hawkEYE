@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { AuthorityShell } from '../components/layout/AuthorityShell';
 import { useAuthorityReports } from '../context/AuthorityReportsContext';
 import { normalizeReportStatus } from '../../utils/statusNormalizer';
-import { API_BASE_URL } from '../../config/api';
+import { apiFetch } from '../../utils/apiClient';
 
 export const DevelopmentIntelligencePage: React.FC = () => {
   const { reports } = useAuthorityReports();
@@ -17,8 +17,8 @@ export const DevelopmentIntelligencePage: React.FC = () => {
       setLoading(true);
       try {
         const [themesRes, propsRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/intelligence/themes`),
-          fetch(`${API_BASE_URL}/api/intelligence/proposals`),
+          apiFetch('/api/intelligence/themes'),
+          apiFetch('/api/intelligence/proposals'),
         ]);
 
         if (themesRes.ok) setThemes(await themesRes.json());

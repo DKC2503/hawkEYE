@@ -1,6 +1,5 @@
 import type { HawkEyeVisionResult } from '../types/reportFlow';
-
-import { API_BASE_URL } from '../config/api';
+import { apiFetch } from '../utils/apiClient';
 
 export class ApiError extends Error {
   code: string;
@@ -18,10 +17,11 @@ export class VisionApiService {
     formData.append('file', imageFile);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vision/analyze`, {
+      const response = await apiFetch('/api/vision/analyze', {
         method: 'POST',
         body: formData,
       });
+
 
       if (!response.ok) {
         let errorMessage = `API server responded with status ${response.status}`;
