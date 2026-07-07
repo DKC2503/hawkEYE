@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import traceback
+import logging
+
 from app.core.config import settings
 from app.api.vision import router as vision_router
 from app.api.issues import router as issues_router
@@ -9,6 +13,8 @@ from app.api.artisan import router as artisan_router, authority_router
 from app.api.development import router as development_router
 from app.api.auth_dep import get_current_citizen, AuthenticatedCitizen
 
+logger = logging.getLogger("hawkEYE.main")
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
@@ -17,7 +23,17 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"Unhandled exception in API request: {str(exc)}")
+    logger.error(traceback.format_exc())
+    return JSONResponse(
+        status_code=500,
+        content={"success": False, "detail": f"Internal Server Error: {str(exc)}"},
+    )
+
 allowed_origins = [
+    "https://hawkeye-28df9.web.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:5174",
@@ -28,12 +44,16 @@ allowed_origins = [
     "http://127.0.0.1:5176",
 ]
 
-env_origins = settings.FRONTEND_CORS_ORIGIN.split(",")
-for env_origin in env_origins:
-    if env_origin.strip():
-        allowed_origins.append(env_origin.strip())
+if settings.FRONTEND_CORS_ORIGIN:
+    env_origins = settings.FRONTEND_CORS_ORIGIN.split(",")
+    for env_origin in env_origins:
+        stripped = env_origin.strip().rstrip("/")
+        if stripped:
+            allowed_origins.append(stripped)
 
 origins = list(dict.fromkeys(allowed_origins))
+
+print(f"INFO:     CORS Allowed Origins: {origins}")
 
 app.add_middleware(
     CORSMiddleware,
