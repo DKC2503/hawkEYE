@@ -1,6 +1,7 @@
 import os
 import logging
 from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv, dotenv_values
 
 logger = logging.getLogger("hawkEYE.config")
@@ -52,6 +53,9 @@ class Settings:
     def FIREBASE_PROJECT_ID(self) -> str:
         return os.getenv("FIREBASE_PROJECT_ID", "hawkeye-28df9").strip()
 
+    FIREBASE_SERVICE_ACCOUNT_JSON: Optional[str] = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "").strip()
+
+
     @property
     def FIREBASE_SERVICE_ACCOUNT_PATH(self) -> str:
         val = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH", "").strip()
@@ -63,6 +67,8 @@ class Settings:
                 return str(p)
 
         candidates = [
+            Path("/etc/secrets/firebase-service-account.json"),
+            Path("/var/run/secrets/firebase-service-account.json"),
             self.BACKEND_DIR / "secrets" / "firebase-service-account.json",
             self.BACKEND_DIR / "secrets" / "firebase-service-account.json.json",
             self.BACKEND_DIR / "service-account.json",
