@@ -29,7 +29,10 @@ async def get_optional_citizen(authorization: Optional[str] = Header(None)) -> O
 
 async def get_current_citizen(authorization: str = Header(None)) -> AuthenticatedCitizen:
     # Diagnostic check
-    has_sa = bool(settings.FIREBASE_SERVICE_ACCOUNT_PATH and Path(settings.FIREBASE_SERVICE_ACCOUNT_PATH).exists())
+    has_sa = bool(
+        settings.FIREBASE_SERVICE_ACCOUNT_JSON or 
+        (settings.FIREBASE_SERVICE_ACCOUNT_PATH and Path(settings.FIREBASE_SERVICE_ACCOUNT_PATH).exists())
+    )
 
     if not authorization:
         logger.warning("[AUTH_DIAGNOSTIC] Authorization header missing.")
@@ -97,6 +100,21 @@ async def get_current_citizen(authorization: str = Header(None)) -> Authenticate
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"[AUTH_VERIFICATION_FAILED] Firebase identity token verification failed: {exc_name}",
         )
+
+import uuid
+
+async def get_current_citizen_demo_fallback(authorization: str = Header(None)) -> AuthenticatedCitizen:
+    try:
+        return await get_current_citizen(authorization)
+    except HTTPException as e:
+        detail = str(e.detail)
+        if "FIREBASE_ADMIN_NOT_CONFIGURED" in detail or "DefaultCredentialsError" in detail or "AUTH_VERIFICATION_FAILED" in detail:
+            logger.warning("[DEMO_FALLBACK] Firebase token verification unavailable; accepting anonymous citizen report")
+            return AuthenticatedCitizen(
+                uid=f"demo_anon_{uuid.uuid4().hex[:8]}",
+                decoded_token={"auth_mode": "hackathon_demo_fallback"}
+            )
+        raise e
 
 async def get_current_authority(
     citizen: AuthenticatedCitizen = Depends(get_current_citizen),

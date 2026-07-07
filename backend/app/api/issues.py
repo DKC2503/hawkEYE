@@ -7,7 +7,8 @@ from PIL import Image
 from pydantic import BaseModel, Field
 from firebase_admin import auth as firebase_auth
 from app.core.config import settings
-from app.api.auth_dep import get_current_citizen, AuthenticatedCitizen
+from app.api.auth_dep import get_current_citizen, get_current_citizen_demo_fallback, AuthenticatedCitizen
+from app.core.firebase import get_firestore_client
 from app.services.cloudinary_service import cloudinary_service
 from app.services.firestore_service import (
     firestore_service,
@@ -30,21 +31,28 @@ class DeletePayload(BaseModel):
     notes: Optional[str] = None
     remarks: Optional[str] = None
 
+import time
+
 @router.get("/issues", summary="Get all issues for Authority Dashboard and City Map")
 def get_all_issues(
     status: Optional[str] = Query(None),
     category: Optional[str] = Query(None),
     severity: Optional[str] = Query(None),
 ):
+    start_time = time.time()
+    logger.info("Endpoint entered: GET /api/issues")
     try:
         issues = firestore_service.get_all_issues(
             status_filter=status,
             category_filter=category,
             severity_filter=severity,
         )
+        elapsed = (time.time() - start_time) * 1000
+        logger.info(f"Firestore query completed in {elapsed:.2f}ms. Returned {len(issues)} issues.")
         return {"success": True, "issues": issues, "count": len(issues)}
     except Exception as e:
-        logger.error(f"Error fetching issues: {str(e)}")
+        elapsed = (time.time() - start_time) * 1000
+        logger.error(f"Error fetching issues after {elapsed:.2f}ms: {str(e)}")
         return {"success": True, "issues": [], "count": 0}
 
 @router.get("/issues/my-issues", summary="Get citizen's own submitted issues")
@@ -238,7 +246,7 @@ async def create_issue(
     citizenNotes: str = Form(""),
     idempotencyKey: str = Form(None),
     userConfirmedDifferent: bool = Form(False),
-    citizen: AuthenticatedCitizen = Depends(get_current_citizen),
+    citizen: AuthenticatedCitizen = Depends(get_current_citizen_demo_fallback),
 ):
     if not (-90.0 <= latitude <= 90.0):
         raise HTTPException(
@@ -348,6 +356,11 @@ async def create_issue(
             idempotency_key=idempotencyKey,
             user_confirmed_different=userConfirmedDifferent,
         )
+
+        if citizen.decoded_token.get("auth_mode") == "hackathon_demo_fallback":
+            get_firestore_client().collection("issues").document(created_issue["issueId"]).update({
+                "auth_mode": "hackathon_demo_fallback"
+            })
 
         return {
             "success": True,
