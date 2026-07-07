@@ -23,14 +23,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-@app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
-    logger.error(f"Unhandled exception in API request: {str(exc)}")
-    logger.error(traceback.format_exc())
-    return JSONResponse(
-        status_code=500,
-        content={"success": False, "detail": f"Internal Server Error: {str(exc)}"},
-    )
+# Global exception handler removed to allow CORSMiddleware to properly process 500s
 
 allowed_origins = [
     "https://hawkeye-28df9.web.app",

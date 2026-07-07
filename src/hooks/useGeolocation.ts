@@ -97,6 +97,26 @@ export const useGeolocation = () => {
         const lng = position.coords.longitude;
         const acc = position.coords.accuracy;
 
+        if (acc > 1000) {
+          isRequestInProgress.current = false;
+          setState((prev) => ({
+            ...prev,
+            status: 'position_unavailable',
+            error: 'Location accuracy is too low. Enable Precise Location/GPS and retry.',
+          }));
+          return;
+        }
+
+        if (acc > 100) {
+          isRequestInProgress.current = false;
+          setState((prev) => ({
+            ...prev,
+            status: 'position_unavailable',
+            error: `Location accuracy is low (±${Math.round(acc)}m). Please enable Precise Location or step outside and retry.`,
+          }));
+          return;
+        }
+
         const initialLocation: StructuredLocation = {
           latitude: lat,
           longitude: lng,
@@ -162,9 +182,9 @@ export const useGeolocation = () => {
         }));
       },
       {
-        enableHighAccuracy: false, // Initial speed & reliability focus
+        enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 30000,
+        maximumAge: 0,
       }
     );
   }, []);
